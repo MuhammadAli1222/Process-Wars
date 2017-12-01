@@ -1,6 +1,5 @@
 # Process Wars
 
-----
 ## What is this?
 * Process wars is an exercise in synchronization written in C.
 * It is essentially a turn-based game where the main process keeps track of a number of "warring" forked processes, which each have soldiers and fighters. In-depth instructions [here](https://www.pdf-archive.com/2017/12/01/process-wars/).
@@ -9,15 +8,12 @@
 * Damage received from an attack is received by soldiers. Each soldier has 3 health points, and dies after it loses the 3 health points. 
 * A process has "lost" after all its soldiers are dead.
 
-----
 ## Usage
 1. Compile like so: `gcc -pthread -lrt -Wall -Werror war.c`
 2. Run the executable specifying the number of children and number of fighters like so: `./a.out -children 5 -fighters 5`
 
-----
-##Synchronization
+## Synchronization
 
----
 ### FIFO Communication
 * The master process has to communicate with each of its children in order to get information about the attacked and attacked PID.
 * I use a named pipe to facilitate this communication.
@@ -34,13 +30,11 @@
 
 * Same thing happens with the reader. It waits for `pipe_read` and posts a token to `pipe_write`.
 
----
 ### Mutex for Resource Object 
 * In order to ensure that the access to resource array is synchronized, I use a mutex `thread_mutex` to lock and unlock threads.
 * Malloced in line 391. I chose to allocate the space on heap to ensure that the mutex will be shared by all the threads (since they have share the heap).
 * See `farmer_routine` and `soldier_routine` (line 53 and 98) for its use. Everytime I access the `resource` array I make sure to lock and unlock.
 
----
 ### Semaphore for 6 Farmers 
 * Semaphore `sem` used to ensure that only 6 farmers at a time are active. 
 * Initialized with 6 tokens (see line 410).
